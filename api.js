@@ -13,15 +13,21 @@ const flash = require('connect-flash');
 
 const app = express();
 
+
+// routers
+const authRouter = require("./routes/auth");
+const jobsRouter = require("./routes/jobs");
+
 const store = new MongoDBStore({
   uri: process.env.MONGODB_URI,
   collection: 'sessions'
 });
 const csrfProtection = csrf();
 
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
-const authRoutes = require('./routes/auth');
+// Create the routes/
+// Follow a versioned API convention
+app.use("/api/v1/auth", authRouter);
+// app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -60,17 +66,17 @@ app.use((req, res, next) => {
 //     });
 });
 
-app.get('/500', errorController.get500);
-app.use(errorController.get404);
-app.use((error, req, res, next) => {
-  // res.status(error.httpStatusCode).render(...);
-  // res.redirect('/500');
-  res.status(500).render('500', {
-    pageTitle: 'Error!',
-    path: '/500',
-    isAuthenticated: req.session.isLoggedIn
-  });
-});
+// app.get('/500', errorController.get500);
+// app.use(errorController.get404);
+// app.use((error, req, res, next) => {
+//   // res.status(error.httpStatusCode).render(...);
+//   // res.redirect('/500');
+//   res.status(500).render('500', {
+//     pageTitle: 'Error!',
+//     path: '/500',
+//     isAuthenticated: req.session.isLoggedIn
+//   });
+// });
 
 mongoose
   .connect(process.env.MONGODB_URI)
