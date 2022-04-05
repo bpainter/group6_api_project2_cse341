@@ -82,7 +82,8 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then(result => {
     app.listen(process.env.PORT, () => {
-        console.log(`Server listening on ${process.env.PORT}`);
+      console.log(`Job API up and running successfully`);
+      console.log(`Server listening on ${process.env.PORT}`);
     });
   })
   .catch(err => {
