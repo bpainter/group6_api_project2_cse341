@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-// const jsonwebtoken = require("jsonwebtoken");
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -17,7 +15,13 @@ const UserSchema = new mongoose.Schema({
     },
     phone: {
         type: Number
-    }
+    },
+    jobs: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Job'
+        }
+    ]
 });
 
 module.exports = mongoose.model("User", UserSchema);
