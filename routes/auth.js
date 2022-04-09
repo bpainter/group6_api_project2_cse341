@@ -6,6 +6,7 @@ const authController= require("../controllers/auth");
 
 const router = express.Router();
 
+// PUT /auth/register
 router.put(
     '/register',
     [
@@ -35,6 +36,7 @@ router.put(
     authController.register
   );
 
+// POST /auth/login
 router.post("/login", authController.login);
 
 module.exports = router;
