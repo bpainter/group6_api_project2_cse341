@@ -1,5 +1,5 @@
 const express = require("express");
-const { body } = require('express-validator/check');
+const { body } = require('express-validator');
 const router = express.Router();
 
 const isAuth = require('../middleware/is-auth');
@@ -51,6 +51,6 @@ router.put(
 router.delete('/job/:jobID', isAuth, deleteJob);
 
 // GET all jobs /jobs
-router.get('/jobs', isAuth, getJobs);
+router.get('/', isAuth, getJobs);
 
 module.exports = router;

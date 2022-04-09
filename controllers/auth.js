@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require("../models/User");
-const { StatusCodes } = require("http-status-codes");
+// const { StatusCodes } = require("http-status-codes");
 
 // Registration for new accounts
 exports.register = async (req, res, next) => {
@@ -14,16 +14,20 @@ exports.register = async (req, res, next) => {
     error.data = errors.array();
     throw error;
   }
+  
   const email = req.body.email;
   const name = req.body.name;
   const password = req.body.password;
+  const phone = req.body.phone;
+
   bcrypt
     .hash(password, 12)
     .then(hashedPw => {
       const user = new User({
         email: email,
         password: hashedPw,
-        name: name
+        name: name,
+        phone: phone
       });
       return user.save();
     })
@@ -38,6 +42,7 @@ exports.register = async (req, res, next) => {
     });
 }
 
+// Login for existing accounts
 exports.login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;

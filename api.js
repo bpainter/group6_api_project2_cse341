@@ -2,18 +2,18 @@
 // the environment variables for the API
 require('dotenv').config();
 
+const path = require('path');
+
 const express = require('express');
-const api = express();
-
-// Parse incoming request bodies in a middleware before your handlers, available under the req.body property
 const bodyParser = require('body-parser');
-
-// Connect to mongoDB
 const mongoose = require('mongoose');
+const multer = require('multer');
 
 // Routers for authentication & job CRUD
 const authRouter = require("./routes/auth");
 const jobsRouter = require("./routes/jobs");
+
+const api = express();
 
 api.use(bodyParser.json());
 
@@ -28,9 +28,9 @@ api.use((req, res, next) => {
   next();
 });
 
-// Set up paths for the versioned api
-api.use("/api/v1/auth", authRouter);
-api.use("/api/v1/jobs", jobsRouter);
+// Set up paths for the api
+api.use("/auth", authRouter);
+api.use("/jobs", jobsRouter);
 
 // Handle errors
 api.use((error, req, res, next) => {

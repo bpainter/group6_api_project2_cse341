@@ -3,7 +3,8 @@ const { body } = require('express-validator');
 
 const router = express.Router();
 
-const { register, login } = require("../controllers/auth");
+// const { register, login } = require("../controllers/auth");
+const authController= require("../controllers/auth");
 
 router.put(
     '/register',
@@ -27,9 +28,9 @@ router.put(
         .not()
         .isEmpty()
     ],
-    register
+    authController.register
   );
 
-router.post("/login", login);
+router.post("/login", authController.login);
 
 module.exports = router;
