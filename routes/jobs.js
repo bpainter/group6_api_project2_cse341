@@ -1,5 +1,8 @@
 const express = require("express");
+const { body } = require('express-validator/check');
 const router = express.Router();
+
+const isAuth = require('../middleware/is-auth');
 
 // Creates the routes for standard CRUD with the addition
 // of returning all Jobs
@@ -11,9 +14,43 @@ const {
   getJobs,
 } = require("../controllers/jobs");
 
-// 
-router.route("/").post(createJob).get(getJobs);
+// POST /post
+router.post(
+  '/job',
+  isAuth,
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 5 }),
+    body('content')
+      .trim()
+      .isLength({ min: 5 })
+  ],
+  createJob
+);
 
-router.route("/:id").get(getJob).delete(deleteJob).patch(updateJob);
+// GET /job/:id
+router.get('/job/:jobId', isAuth, getJob);
+
+// UPDATE /job/:id
+router.put(
+  '/job/:jobtId',
+  isAuth,
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 5 }),
+    body('content')
+      .trim()
+      .isLength({ min: 5 })
+  ],
+  updateJob
+);
+
+// DELETE
+router.delete('/job/:jobID', isAuth, deleteJob);
+
+// GET all jobs /jobs
+router.get('/jobs', isAuth, getJobs);
 
 module.exports = router;
