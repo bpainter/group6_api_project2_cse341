@@ -7,6 +7,7 @@ const User = require("../models/user");
 // Registration for new accounts
 exports.register = (req, res, next) => {
   const errors = validationResult(req);
+  
   if (!errors.isEmpty()) {
     const error = new Error('Validation failed.');
     error.statusCode = 422;
@@ -14,8 +15,8 @@ exports.register = (req, res, next) => {
     throw error;
   }
 
-  const email = req.body.email;
   const name = req.body.name;
+  const email = req.body.email;
   const password = req.body.password;
   const phone = req.body.phone;
 
@@ -23,9 +24,9 @@ exports.register = (req, res, next) => {
     .hash(password, 12)
     .then(hashedPw => {
       const user = new User({
+        name: name,
         email: email,
         password: hashedPw,
-        name: name,
         phone: phone
       });
       return user.save();
@@ -67,7 +68,7 @@ exports.login = (req, res, next) => {
           email: loadedUser.email,
           userId: loadedUser._id.toString()
         },
-        'somesupersecretsecret',
+        'tmpsecrettoken',
         { expiresIn: '1h' }
       );
       res.status(200).json({ token: token, userId: loadedUser._id.toString() });

@@ -14,7 +14,6 @@ const JobSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    // details like salary, ft or pt, etc
     details: {
       type: String,
       required: true
