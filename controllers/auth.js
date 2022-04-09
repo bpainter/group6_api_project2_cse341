@@ -2,11 +2,10 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const User = require("../models/User");
-// const { StatusCodes } = require("http-status-codes");
+const User = require("../models/user");
 
 // Registration for new accounts
-exports.register = async (req, res, next) => {
+exports.register = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = new Error('Validation failed.');
@@ -14,7 +13,7 @@ exports.register = async (req, res, next) => {
     error.data = errors.array();
     throw error;
   }
-  
+
   const email = req.body.email;
   const name = req.body.name;
   const password = req.body.password;
@@ -43,7 +42,7 @@ exports.register = async (req, res, next) => {
 }
 
 // Login for existing accounts
-exports.login = async (req, res, next) => {
+exports.login = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   let loadedUser;
