@@ -1,28 +1,67 @@
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
-    name: {
+// const UserSchema = new mongoose.Schema({
+//     name: {
+//         type: String,
+//         required: true
+//     },
+//     email: {
+//         type: String, 
+//         required: true
+//     },
+//     password: {
+//         type: String,
+//         required: true
+//     },
+//     phone: {
+//         type: Number,
+//         required: false
+//     },
+//     jobs: [
+//         {
+//             type: mongoose.Schema.Types.ObjectId,
+//             ref: 'Job'
+//         }
+//     ]
+// });
+
+// module.exports = mongoose.model("User", UserSchema);
+
+
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
+
+const UserSchema = new Schema({
+    username: {
         type: String,
-        required: true
+        required: true,
     },
     email: {
-        type: String, 
-        required: true
+        type: String,
+        required: true,
+        unique: true,
     },
     password: {
         type: String,
-        required: true
+        required: true,
     },
-    phone: {
-        type: Number,
-        required: false
+    date: {
+        type: Date,
+        default: Date.now(),
     },
-    jobs: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Job'
-        }
-    ]
 });
 
-module.exports = mongoose.model("User", UserSchema);
+UserSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+        //do not reveal passwordHash
+        delete returnedObject.password
+    }
+})
+
+const User =  mongoose.model("user", UserSchema);
+
+module.exports = User;
+
