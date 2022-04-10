@@ -1,13 +1,13 @@
 // Add a .env to the folder and include
 // the environment variables for the API
 require('dotenv').config();
-//const mongoString = process.env.DATABASE_URI;
+
+const path = require('path');
+
 const express = require('express');
-const api = express();
-// Parse incoming request bodies in a middleware before your handlers, available under the req.body property
 const bodyParser = require('body-parser');
-// Connect to mongoDB
 const mongoose = require('mongoose');
+const multer = require('multer');
 
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
@@ -27,10 +27,9 @@ const csrfProtection = csrf({
   cookie: false,
 });
 
-// Create the routes/
-// Follow a versioned API convention
-app.use("/api/v1/auth", authRouter);
-// app.use("/api/v1/jobs", authenticateUser, jobsRouter);
+const api = express();
+
+api.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -53,23 +52,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use((req, res, next) => {
-// throw new Error('Sync Dummy');
-//   if (!req.session.user) {
-//     return next();
-//   }
-//   User.findById(req.session.user._id)
-//     .then(user => {
-//       if (!user) {
-//         return next();
-//       }
-//       req.user = user;
-//       next();
-//     })
-//     .catch(err => {
-//       next(new Error(err));
-//     });
-// });
+// Set up paths for the api
+api.use("/auth", authRouter);
+api.use("/jobs", jobsRouter);
 
 // app.get('/500', errorController.get500);
 // app.use(errorController.get404);

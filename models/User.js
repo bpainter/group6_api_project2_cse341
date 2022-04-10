@@ -14,7 +14,8 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     phone: {
-        type: Number
+        type: Number,
+        required: false
     },
     jobs: [
         {

@@ -1,20 +1,15 @@
 const express = require("express");
-const { body } = require('express-validator/check');
-const router = express.Router();
+const { body } = require('express-validator');
 
+const jobsController = require('../controllers/jobs')
 const isAuth = require('../middleware/is-auth');
 
-// Creates the routes for standard CRUD with the addition
-// of returning all Jobs
-const {
-  createJob,
-  getJob,
-  updateJob,
-  deleteJob,
-  getJobs,
-} = require("../controllers/jobs");
+const router = express.Router();
 
-// POST /post
+// GET /jobs/all
+router.get('/all', isAuth, jobsController.getJobs);
+
+// POST /jobs/job
 router.post(
   '/job',
   isAuth,
@@ -22,17 +17,29 @@ router.post(
     body('title')
       .trim()
       .isLength({ min: 5 }),
-    body('content')
+    body('employer')
+      .trim()
+      .isLength({ min: 5 }),
+    body('location')
+      .trim()
+      .isLength({ min: 5 }),
+    body('details')
+      .trim()
+      .isLength({ min: 5 }),
+    body('qualifications')
+      .trim()
+      .isLength({ min: 5 }),
+    body('description')
       .trim()
       .isLength({ min: 5 })
   ],
-  createJob
+  jobsController.createJob
 );
 
-// GET /job/:id
-router.get('/job/:jobId', isAuth, getJob);
+// GET /jobs/job/:id
+router.get('/job/:jobId', isAuth, jobsController.getJob);
 
-// UPDATE /job/:id
+// UPDATE /job/job/:id
 router.put(
   '/job/:jobtId',
   isAuth,
@@ -40,17 +47,26 @@ router.put(
     body('title')
       .trim()
       .isLength({ min: 5 }),
-    body('content')
+    body('employer')
+      .trim()
+      .isLength({ min: 5 }),
+    body('location')
+      .trim()
+      .isLength({ min: 5 }),
+    body('details')
+      .trim()
+      .isLength({ min: 5 }),
+    body('qualifications')
+      .trim()
+      .isLength({ min: 5 }),
+    body('description')
       .trim()
       .isLength({ min: 5 })
   ],
-  updateJob
+  jobsController.updateJob
 );
 
-// DELETE
-router.delete('/job/:jobID', isAuth, deleteJob);
-
-// GET all jobs /jobs
-router.get('/jobs', isAuth, getJobs);
+// DELETE /jobs/job/:id
+router.delete('/job/:jobID', isAuth, jobsController.deleteJob);
 
 module.exports = router;

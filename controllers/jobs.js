@@ -3,12 +3,9 @@ const path = require('path');
 
 const { validationResult } = require('express-validator');
 
-const Job = require("../models/Job");
-const {
-  StatusCodes
-} = require("http-status-codes");
+const Job = require("../models/job");
 
-const createJob = async (req, res, next) => {
+const createJob = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = new Error('Validation failed, entered data is incorrect.');

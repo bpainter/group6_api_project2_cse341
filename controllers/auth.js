@@ -2,28 +2,32 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const User = require("../models/User");
-const { StatusCodes } = require("http-status-codes");
+const User = require("../models/user");
 
 // Registration for new accounts
-exports.register = async (req, res, next) => {
+exports.register = (req, res, next) => {
   const errors = validationResult(req);
+  
   if (!errors.isEmpty()) {
     const error = new Error('Validation failed.');
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
   }
-  const email = req.body.email;
+
   const name = req.body.name;
+  const email = req.body.email;
   const password = req.body.password;
+  const phone = req.body.phone;
+
   bcrypt
     .hash(password, 12)
     .then(hashedPw => {
       const user = new User({
+        name: name,
         email: email,
         password: hashedPw,
-        name: name
+        phone: phone
       });
       return user.save();
     })
@@ -38,7 +42,8 @@ exports.register = async (req, res, next) => {
     });
 }
 
-exports.login = async (req, res, next) => {
+// Login for existing accounts
+exports.login = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   let loadedUser;
@@ -63,7 +68,7 @@ exports.login = async (req, res, next) => {
           email: loadedUser.email,
           userId: loadedUser._id.toString()
         },
-        'somesupersecretsecret',
+        'tmpsecrettoken',
         { expiresIn: '1h' }
       );
       res.status(200).json({ token: token, userId: loadedUser._id.toString() });
