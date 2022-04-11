@@ -1,41 +1,60 @@
-const express = require('express')
-const router = express.Router();
-const bcrypt = require('bcryptjs')
-const userServices = require('../services/UserServices.js')
+var mongoose = require('mongoose'),
+  jwt = require('jsonwebtoken'),
+  bcrypt = require('bcryptjs'),
+  User = mongoose.model('User');
 
-router.post('/register', (req, res, next) => {
-  const {
-    password
-  } = req.body
-  const salt = bcrypt.genSaltSync(10);
-  req.body.password = bcrypt.hashSync(password, salt);
+exports.signUp = function (req, res) {
+  var newUser = new User(req.body);
+  newUser.hash_password = bcrypt.hashSync(req.body.password, 10);
+  newUser.save(function (err, user) {
+    if (err) {
+      return res.status(400).send({
+        message: err
+      });
+    } else {
+      user.hash_password = undefined;
+      return res.json(user);
+    }  
+  });
+};
 
-  userServices.register(req.body).then(
-    res.json({
-      success: true
-    })
-  ).catch(err => next(err))
-})
-
-router.post('/login', (req, res, next) => {
-  const {
-    username,
-    password
-  } = req.body;
-  userServices.login({
-    username,
-    password
-  }).then(user => {
-    user ? res.json(user) : res.json({
-      error: 'Username or password is incorrect'
+exports.signn = function (req, res) {
+  User.findOne({
+    email: req.body.email
+  }, function (err, user) {
+    if (err) throw err;
+    if (!user || !user.comparePassword(req.body.password)) {
+      return res.status(401).json({
+        message: 'Authentication failed. Invalid user or password.'
+      });
+    }
+    return res.json({
+      token: jwt.sign({
+        email: user.email,
+        fullName: user.fullName,
+        _id: user._id
+      }, 'RESTFULAPIs')
     });
-  }).catch(err => next(err))
-})
+  });
+};
 
-router.get('/:id', (req, res, next) => {
-  userServices.getById(req.params.id).then(
-    (user) => res.json(user)
-  ).catch(err => next(err))
-})
+exports.loginRequired = function (req, res, next) {
+  if (req.user) {
+    next();
+  } else {
 
-module.exports = router;
+    return res.status(401).json({
+      message: 'Unauthorized user!!'
+    });
+  }
+};
+exports.profile = function (req, res, next) {
+  if (req.user) {
+    res.send(req.user);
+    next();
+  } else {
+    return res.status(401).json({
+      message: 'Invalid token'
+    });
+  }
+};

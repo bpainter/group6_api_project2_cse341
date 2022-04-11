@@ -2,17 +2,16 @@ const express = require("express");
 const { body } = require('express-validator');
 
 const jobsController = require('../controllers/jobs')
-const isAuth = require('../middleware/is-auth');
+//const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
 
 // GET /jobs/all
-router.get('/all', isAuth, jobsController.getJobs);
+router.get('/all', jobsController.getJobs);
 
 // POST /jobs/job
 router.post(
   '/job',
-  isAuth,
   [
     body('title')
       .trim()
@@ -37,12 +36,11 @@ router.post(
 );
 
 // GET /jobs/job/:id
-router.get('/job/:jobId', isAuth, jobsController.getJob);
+router.get('/job/:jobId', jobsController.getJob);
 
 // UPDATE /job/job/:id
 router.put(
   '/job/:jobtId',
-  isAuth,
   [
     body('title')
       .trim()
@@ -67,6 +65,6 @@ router.put(
 );
 
 // DELETE /jobs/job/:id
-router.delete('/job/:jobID', isAuth, jobsController.deleteJob);
+router.delete('/job/:jobID', jobsController.deleteJob);
 
 module.exports = router;

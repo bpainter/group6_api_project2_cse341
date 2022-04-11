@@ -1,67 +1,34 @@
-// const mongoose = require("mongoose");
-
-// const UserSchema = new mongoose.Schema({
-//     name: {
-//         type: String,
-//         required: true
-//     },
-//     email: {
-//         type: String, 
-//         required: true
-//     },
-//     password: {
-//         type: String,
-//         required: true
-//     },
-//     phone: {
-//         type: Number,
-//         required: false
-//     },
-//     jobs: [
-//         {
-//             type: mongoose.Schema.Types.ObjectId,
-//             ref: 'Job'
-//         }
-//     ]
-// });
-
-// module.exports = mongoose.model("User", UserSchema);
-
-
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
-
-const UserSchema = new Schema({
-    username: {
+`use script`
+var mongoose = require('mongoose'),
+    bcrypt = require('bcryptjs'),
+    Schema = mongoose.Schema;
+/**
+ * User Schema
+ */
+var UserSchema = new Schema({
+    fullName: {
         type: String,
-        required: true,
+        trim: true,
+        required: true
     },
     email: {
         type: String,
-        required: true,
         unique: true,
+        lowercase: true,
+        trim: true,
+        required: true
     },
-    password: {
-        type: String,
-        required: true,
+    hash_password: {
+        type: String
     },
-    date: {
+    created: {
         type: Date,
-        default: Date.now(),
-    },
+        default: Date.now
+    }
 });
 
-UserSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
-        //do not reveal passwordHash
-        delete returnedObject.password
-    }
-})
+UserSchema.methods.comparePassword = function (password) {
+    return bcrypt.compareSync(password, this.hash_password);
+};
 
-const User =  mongoose.model("user", UserSchema);
-
-module.exports = User;
-
+mongoose.model('User', UserSchema);

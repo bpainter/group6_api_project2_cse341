@@ -1,74 +1,18 @@
-// const express = require("express");
-// const { body } = require('express-validator');
+'use strict';
 
-// const User = require('../models/user');
-// const authController= require("../controllers/auth");
+module.exports = function (app) {
 
-// const router = express.Router();
+    var userHandlers = require('../controllers/auth');
 
-// // PUT /auth/register
-// router.put(
-//     '/register',
-//     [
-//         body('name')
-//             .trim(),
-//         body('email')
-//             .isEmail()
-//             .withMessage('Please enter a valid email.')
-//             .custom((value, { req }) => {
-//                 return User.findOne({ email: value }).then(userDoc => {
-//                     if (userDoc) {
-//                         return Promise.reject('E-Mail address already exists!');
-//                     }   
-//                  });
-//             })
-//             .normalizeEmail(),
-//         body('password')
-//             .trim()
-//             .isLength({ min: 5 }),
-//         body('phone')
-//             .trim()
-//     ],
-//     authController.register
-//   );
-
-// // POST /auth/login
-// router.post("/login", authController.login);
-
-// module.exports = router; 
-
-const User = require('../models/UserModels')
-const bcrypt = require('bcryptjs');
-const auth = require('../helpers/jwt.js')
+    // todoList Routes
+    // app.route('/profile')
+    //     .post(userHandlers.loginRequired, userHandlers.profile);
 
 
-async function login({ username, password }) {
-    const user = await User.findOne({username});
+    app.route('/auth/signUp').post(userHandlers.signUp);
 
-    // synchronously compare user entered password with hashed password
-    if(user && bcrypt.compareSync(password, user.password)){
-        const token = auth.generateAccessToken(username);
+    app.route('/auth/signIn')
+        .post(userHandlers.signIn);
 
-        // call toJSON method applied during model instantiation
-        return {...user.toJSON(), token}
-    }
-}
-
-async function register(params){
-    // instantiate a user modal and save to mongoDB
-    const user = new User(params)
-    await user.save();
-}
-
-async function getById(id) {
-
-    const user = await User.findById(id);
-    // call toJSON method applied during model instantiation
-    return user.toJSON()
-}
-
-module.exports = {
-    login,
-    register,
-    getById
+    
 };
